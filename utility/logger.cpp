@@ -32,14 +32,13 @@ Logger::~Logger() {
 }
 
 void Logger::open(const string & filename) {//将输出流绑定到此文件
-    m_size = 0;
     m_filename = filename;
     m_fout.open(filename, ios::app);
     if(m_fout.fail()) {
         throw new logic_error("open file fail!");
     }
-    // m_fout.seekp(0, ios::end);
-    // m_size = m_fout.tellp();
+    m_fout.seekp(0, ios::end);
+    m_size = m_fout.tellp();
 }
 
 void Logger::close() {
@@ -60,7 +59,7 @@ void Logger::log(Level level, const char * file, int line, const char * format, 
     const char * m_fmt = "%s %s %s:%d";//保存的格式：时间 日志级别 文件名 行号
     int len = snprintf(NULL, 0, m_fmt, m_time, m_Level_string[level], file, line);//先计算这些字符串一共需要多少字符保存
     m_size += len;
-    if(len > 0) {
+    if(len > 0) {        
         char * buffer = new char[len + 1];
         memset(buffer, 0, len + 1);
         snprintf(buffer, len + 1, m_fmt, m_time, m_Level_string[level], file, line);
